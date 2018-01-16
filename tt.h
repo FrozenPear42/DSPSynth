@@ -12,6 +12,8 @@
 #include <signal.h>
 
 #define NUM_SAMPLES 1024
+#define SAMPLING_FREQUENCY 48000
+#define VOICES 1
 
 // Function prototypes for this talkthrough code
 
@@ -41,7 +43,9 @@ extern void InitSPI();
 extern void DisableSPI();
 
 extern unsigned char params[256];
-
+extern unsigned char notes[VOICES];
+extern unsigned char notes_velocity[VOICES];
+extern unsigned char notes_last_index;
 
 extern int isProcessing;
 extern int blockReady;
