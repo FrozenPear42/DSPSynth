@@ -12,8 +12,6 @@ void processBlock(unsigned int *block_ptr)
    	unsigned char vl=params[16]*(params[18]/127.0);
    	unsigned char vr=params[17]*((127-params[18])/127.0);
    
-
-    
     //Clear the Block Ready Semaphore
     blockReady = 0;
     
