@@ -1,5 +1,5 @@
 #include "tt.h"
-
+#include <math.h>
 // Place the audio processing algorith here. The input and output are given
 // as unsigned integer pointers.
 extern unsigned char params[256];
