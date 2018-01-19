@@ -1,6 +1,18 @@
 #include "tt.h"
 
+#define IGNORE_REC 0
+#define CC_REC 1
+#define NOTEON_REC 2
+#define CC_SECOND_REC 3
+#define NOTEON_SECOND_REC 4
+
+
 unsigned char params[256];
+
+unsigned char notes[VOICES];
+unsigned char notes_velocity[VOICES];
+unsigned char notes_last_index;
+
 unsigned char liczba;
 unsigned char byte_2nd;
 unsigned char byte_3rd;
@@ -19,6 +31,12 @@ void InitSPI()
     for (i=0;i<256;i++)
     	params[i] = 0;
     
+    for(i=0;i< VOICES;i++){
+        notes[i] = 0;
+        notes_velocity[i] = 0;
+    }
+    notes_last_index = 0;
+
     *pSPICTL = (TXFLSH | RXFLSH);
 //    *pSPIFLG = 0;
 
@@ -53,7 +71,6 @@ void SpiISR(int sig_int)
     
     index++;
     
-    
     unsigned int rdata = *pRXSPI;
     rdata = rdata & 0x00FF;
     //params[index]=rdata;
@@ -61,30 +78,42 @@ void SpiISR(int sig_int)
     if (rdata > 127) {
         liczba = rdata & 0xF0;
         if (liczba == 0xB0) {//polecenie controll change, dowolny adres MIDI       
-            indeks_midi = 1; //nastepny odebrany bajt <128 wpisz do 2nd_byte 
+            indeks_midi = CC_REC; //nastepny odebrany bajt <128 wpisz do 2nd_byte 
+        }  else if( liczba == 0x90) { //polecenie noteon
+            indeks_midi = NOTEON_REC;           
         } else {
-            indeks_midi = 0; //polecenie inne niz controll change, ignoruj
+            indeks_midi = IGNORE_REC; //polecenie inne niz controll change, ignoruj
         }
     } else {
-        if (indeks_midi == 1) {
+        if (indeks_midi == CC_REC) {
             byte_2nd = rdata;
-            indeks_midi = 3; //nastepny odebrany bajt <128 wpisz do 3rd_byte
-            //handle_LED(byte_2rd);        
-        } else if (indeks_midi == 3) {
+            indeks_midi = CC_SECOND_REC; //nastepny odebrany bajt <128 wpisz do 3rd_byte
+        
+        } else if (indeks_midi == NOTEON_REC) {
+            byte_2nd = rdata;
+            indeks_midi = NOTEON_SECOND_REC; //nastepny odebrany bajt <128 wpisz do 3rd_byte
+        
+        } else if (indeks_midi == CC_SECOND_REC) {
             byte_3rd = rdata;
-            indeks_midi = 1; //jesli odbierze potem jeszcze jeden bajt <128, to kolejna dana
-           handle_LED(byte_3rd-64);
-           
-                           
-           params[byte_2nd] = byte_3rd;
-            
+            indeks_midi = CC_REC; //jesli odbierze potem jeszcze jeden bajt <128, to kolejna dana
+            handle_LED(byte_3rd-64);
+            params[byte_2nd] = byte_3rd;
+        
+        } else if (indeks_midi == NOTEON_SECOND_REC) {
+            byte_3rd = rdata;
+            indeks_midi = NOTEON_REC; //jesli odbierze potem jeszcze jeden bajt <128, to kolejna dana
+            if(byte_3rd != 0) {
+                notes[notes_last_index] = byte_2nd;
+                notes_velocity[notes_last_index] = byte_3rd;
+                notes_last_index = (notes_last_index+1) % VOICES;
+            }
+            else {
+                for(i=0; i< VOICES;i++)
+                    if(notes[i] == byte_2nd)
+                        notes_velocity[i] = 0;
+            }
         }
     }
-  /*  if (index > 50) {
-    	handle_LED(6);
-    	index =1;
-    }	*/
-//    handle_LED(index);
 }
 
 void DisableSPI()
