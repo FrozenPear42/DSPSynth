@@ -22,9 +22,9 @@
 
 void ProcessingTooLong(void);
 
-extern unsigned int Block_A[NUM_SAMPLES] ;
-extern unsigned int Block_B[NUM_SAMPLES] ;
-extern unsigned int Block_C[NUM_SAMPLES] ;
+extern unsigned int Block_A[NUM_SAMPLES];
+extern unsigned int Block_B[NUM_SAMPLES];
+extern unsigned int Block_C[NUM_SAMPLES];
 
 extern unsigned int OFFSET ;
 

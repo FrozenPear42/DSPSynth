@@ -1,6 +1,13 @@
 #include "envelope.h"
 #include <math.h>
 
+void envelopeClear(envelope_t *envelope) {
+    envelope->attackCoeff = 0;
+    envelope->decayCoeff = 0;
+    envelope->currentValue = 0;
+    envelope-> highLevel = 0;
+}
+
 void envelopeInit(envelope_t *envelope, long samplingFrequency, float lowLevel, float highLevel, float riseTime, float decayTime)
 {
     envelope->currentValue = lowLevel;

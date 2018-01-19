@@ -1,130 +1,130 @@
-// #include <filter.h>
-#include <math.h>
-#include "envelope.h"
-#include "effect.h"
-#include "oscillator.h"
-#include "filter.h"
+// // #include <filter.h>
+// #include <math.h>
+// #include "envelope.h"
+// #include "effect.h"
+// #include "oscillator.h"
+// #include "filter.h"
 
-#define N_SAMPLES 256
-#define SAMPLING_FREQ 48000.0
+// #define N_SAMPLES 256
+// #define SAMPLING_FREQ 48000.0
 
-#define CC_MIX_SINE 16
-#define CC_MIX_SQUARE 17
-#define CC_MIX_SAWTOOTH 18
-#define CC_MIX_TRIANGLE 19
-#define CC_LFO_FREQ 20
-#define CC_DISTORTION 21
-#define CC_MASTER 22
-#define CC_PAN 23
+// #define CC_MIX_SINE 16
+// #define CC_MIX_SQUARE 17
+// #define CC_MIX_SAWTOOTH 18
+// #define CC_MIX_TRIANGLE 19
+// #define CC_LFO_FREQ 20
+// #define CC_DISTORTION 21
+// #define CC_MASTER 22
+// #define CC_PAN 23
 
-#define CC_ATTACK 24
-#define CC_DECAY 25
-#define CC_CUTOFF 26
-#define CC_RES 27
+// #define CC_ATTACK 24
+// #define CC_DECAY 25
+// #define CC_CUTOFF 26
+// #define CC_RES 27
 
-#define LFO_MAX_FREQ 40.0
-#define DIST_GAIN_MAX 100.0
-#define TIME_MAX 1.0
+// #define LFO_MAX_FREQ 40.0
+// #define DIST_GAIN_MAX 100.0
+// #define TIME_MAX 1.0
 
-float MIDICCparams[256];
+// float MIDICCparams[256];
 
-float LFObuffer[N_SAMPLES];
+// float LFObuffer[N_SAMPLES];
 
-float VCObuffer[N_SAMPLES];
-float VCOTMPbuffer[N_SAMPLES];
-float envelopeBuffer[N_SAMPLES];
+// float VCObuffer[N_SAMPLES];
+// float VCOTMPbuffer[N_SAMPLES];
+// float envelopeBuffer[N_SAMPLES];
 
-float outputBuffer[N_SAMPLES];
-float outputBufferLeft[N_SAMPLES];
-float outputBufferRight[N_SAMPLES];
+// float outputBuffer[N_SAMPLES];
+// float outputBufferLeft[N_SAMPLES];
+// float outputBufferRight[N_SAMPLES];
 
-moog_filter_t moogFilterDesc;
-envelope_t envelopeA;
+// moog_filter_t moogFilterDesc;
+// envelope_t envelopeA;
 
-main()
-{
-	int i;
-	unsigned long n = 0;
-	MIDICCparams[CC_MIX_SINE] = 0.0;
-	MIDICCparams[CC_MIX_SQUARE] = 0.0;
-	MIDICCparams[CC_MIX_SAWTOOTH] = 0.0;
-	MIDICCparams[CC_MIX_TRIANGLE] = 0.9;
+// main()
+// {
+// 	int i;
+// 	unsigned long n = 0;
+// 	MIDICCparams[CC_MIX_SINE] = 0.0;
+// 	MIDICCparams[CC_MIX_SQUARE] = 0.0;
+// 	MIDICCparams[CC_MIX_SAWTOOTH] = 0.0;
+// 	MIDICCparams[CC_MIX_TRIANGLE] = 0.9;
 
-	MIDICCparams[CC_LFO_FREQ] = 0.8;
-	MIDICCparams[CC_DISTORTION] = 0.5;
-	MIDICCparams[CC_PAN] = 0.5;
-	MIDICCparams[CC_MASTER] = 0.5;
+// 	MIDICCparams[CC_LFO_FREQ] = 0.8;
+// 	MIDICCparams[CC_DISTORTION] = 0.5;
+// 	MIDICCparams[CC_PAN] = 0.5;
+// 	MIDICCparams[CC_MASTER] = 0.5;
 	
-	MIDICCparams[CC_ATTACK] = 0.4;
-	MIDICCparams[CC_DECAY] = 0.1;
+// 	MIDICCparams[CC_ATTACK] = 0.4;
+// 	MIDICCparams[CC_DECAY] = 0.1;
 
-	MIDICCparams[CC_CUTOFF] = 0.5;
-	MIDICCparams[CC_RES] = 0.2;
+// 	MIDICCparams[CC_CUTOFF] = 0.5;
+// 	MIDICCparams[CC_RES] = 0.2;
 	
-	moogFilterInit(&moogFilterDesc);
-	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, 1.00, MIDICCparams[CC_ATTACK] * TIME_MAX, MIDICCparams[CC_DECAY] * TIME_MAX);
+// 	moogFilterInit(&moogFilterDesc);
+// 	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, 1.00, MIDICCparams[CC_ATTACK] * TIME_MAX, MIDICCparams[CC_DECAY] * TIME_MAX);
 
-	while (1)
-	{
-		// mixing VCO
-		SineOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
-		for (i = 0; i < N_SAMPLES; i++)
-		{
-			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SINE];
-		}
+// 	while (1)
+// 	{
+// 		// mixing VCO
+// 		SineOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
+// 		for (i = 0; i < N_SAMPLES; i++)
+// 		{
+// 			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SINE];
+// 		}
 
-		SquareOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
-		for (i = 0; i < N_SAMPLES; i++)
-		{
-			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SQUARE];
-		}
+// 		SquareOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
+// 		for (i = 0; i < N_SAMPLES; i++)
+// 		{
+// 			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SQUARE];
+// 		}
 
-		SawtoothOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
-		for (i = 0; i < N_SAMPLES; i++)
-		{
-			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SAWTOOTH];
-		}
+// 		SawtoothOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
+// 		for (i = 0; i < N_SAMPLES; i++)
+// 		{
+// 			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SAWTOOTH];
+// 		}
 
-		TriangleOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
-		for (i = 0; i < N_SAMPLES; i++)
-		{
-			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_TRIANGLE];
-		}
+// 		TriangleOscillator(VCOTMPbuffer, N_SAMPLES, n, 1000);
+// 		for (i = 0; i < N_SAMPLES; i++)
+// 		{
+// 			VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_TRIANGLE];
+// 		}
 
-		// LFO
-		SineOscillator(LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
+// 		// LFO
+// 		SineOscillator(LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
 
-		// VCO modulation with LFO
-		for (i = 0; i < N_SAMPLES; i++)
-		{
-			VCObuffer[i] = VCObuffer[i] * LFObuffer[i];
-		}
+// 		// VCO modulation with LFO
+// 		for (i = 0; i < N_SAMPLES; i++)
+// 		{
+// 			VCObuffer[i] = VCObuffer[i] * LFObuffer[i];
+// 		}
 
-		// filtration
-		moogFilter(&moogFilterDesc, VCObuffer, outputBuffer, N_SAMPLES, MIDICCparams[CC_CUTOFF], MIDICCparams[CC_RES]);
-		//for (i = 0; i < N_SAMPLES; i++)
-		//{
-		//	outputBuffer[i] = VCObuffer[i];
-		//}
+// 		// filtration
+// 		moogFilter(&moogFilterDesc, VCObuffer, outputBuffer, N_SAMPLES, MIDICCparams[CC_CUTOFF], MIDICCparams[CC_RES]);
+// 		//for (i = 0; i < N_SAMPLES; i++)
+// 		//{
+// 		//	outputBuffer[i] = VCObuffer[i];
+// 		//}
 		
 		
-		// envelope
-		envelopeStep(&envelopeA, envelopeBuffer, N_SAMPLES);
-		for (i = 0; i < N_SAMPLES; i++)
-		{
-			outputBuffer[i] = outputBuffer[i] * envelopeBuffer[i];
-		}
+// 		// envelope
+// 		envelopeStep(&envelopeA, envelopeBuffer, N_SAMPLES);
+// 		for (i = 0; i < N_SAMPLES; i++)
+// 		{
+// 			outputBuffer[i] = outputBuffer[i] * envelopeBuffer[i];
+// 		}
 
-		//distortion
-		distortion(outputBuffer, N_SAMPLES, DIST_GAIN_MAX * MIDICCparams[CC_DISTORTION]);
+// 		//distortion
+// 		distortion(outputBuffer, N_SAMPLES, DIST_GAIN_MAX * MIDICCparams[CC_DISTORTION]);
 
-		//pan
-		for (i = 0; i < N_SAMPLES; i++)
-		{
-			outputBufferLeft[i] = MIDICCparams[CC_MASTER] * (1 - MIDICCparams[CC_PAN]) * outputBuffer[i];
-			outputBufferRight[i] = MIDICCparams[CC_MASTER] * (MIDICCparams[CC_PAN]) * outputBuffer[i];
-		}
-		//next buffer
-		n = n + N_SAMPLES;
-	}
-}
+// 		//pan
+// 		for (i = 0; i < N_SAMPLES; i++)
+// 		{
+// 			outputBufferLeft[i] = MIDICCparams[CC_MASTER] * (1 - MIDICCparams[CC_PAN]) * outputBuffer[i];
+// 			outputBufferRight[i] = MIDICCparams[CC_MASTER] * (MIDICCparams[CC_PAN]) * outputBuffer[i];
+// 		}
+// 		//next buffer
+// 		n = n + N_SAMPLES;
+// 	}
+// }
