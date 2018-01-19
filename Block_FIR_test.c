@@ -1,8 +1,9 @@
-#include <filter.h>
+// #include <filter.h>
 #include <math.h>
 #include "envelope.h"
 #include "effect.h"
 #include "oscillator.h"
+#include "filter.h"
 
 #define N_SAMPLES 256
 #define SAMPLING_FREQ 48000.0
@@ -19,9 +20,10 @@
 #define CC_ATTACK 24
 #define CC_DECAY 25
 #define CC_CUTOFF 26
+#define CC_RES 27
 
 #define LFO_MAX_FREQ 40.0
-#define DIST_GAIN_MAX 8.0
+#define DIST_GAIN_MAX 100.0
 #define TIME_MAX 1.0
 
 float MIDICCparams[256];
@@ -36,27 +38,30 @@ float outputBuffer[N_SAMPLES];
 float outputBufferLeft[N_SAMPLES];
 float outputBufferRight[N_SAMPLES];
 
+moog_filter_t moogFilterDesc;
 envelope_t envelopeA;
 
 main()
 {
 	int i;
 	unsigned long n = 0;
-	MIDICCparams[CC_MIX_SINE] = 0.6;
-	MIDICCparams[CC_MIX_SQUARE] = 0.2;
-	MIDICCparams[CC_MIX_SAWTOOTH] = 0.8;
-	MIDICCparams[CC_MIX_TRIANGLE] = 0.2;
+	MIDICCparams[CC_MIX_SINE] = 0.0;
+	MIDICCparams[CC_MIX_SQUARE] = 0.0;
+	MIDICCparams[CC_MIX_SAWTOOTH] = 0.0;
+	MIDICCparams[CC_MIX_TRIANGLE] = 0.9;
 
-	MIDICCparams[CC_LFO_FREQ] = 0.5;
-	MIDICCparams[CC_DISTORTION] = 0.3;
+	MIDICCparams[CC_LFO_FREQ] = 0.8;
+	MIDICCparams[CC_DISTORTION] = 0.5;
 	MIDICCparams[CC_PAN] = 0.5;
 	MIDICCparams[CC_MASTER] = 0.5;
-
 	
 	MIDICCparams[CC_ATTACK] = 0.4;
 	MIDICCparams[CC_DECAY] = 0.1;
-	
 
+	MIDICCparams[CC_CUTOFF] = 0.5;
+	MIDICCparams[CC_RES] = 0.2;
+	
+	moogFilterInit(&moogFilterDesc);
 	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, 1.00, MIDICCparams[CC_ATTACK] * TIME_MAX, MIDICCparams[CC_DECAY] * TIME_MAX);
 
 	while (1)
@@ -92,24 +97,26 @@ main()
 		// VCO modulation with LFO
 		for (i = 0; i < N_SAMPLES; i++)
 		{
-			VCObuffer[i] += VCObuffer[i] * LFObuffer[i];
+			VCObuffer[i] = VCObuffer[i] * LFObuffer[i];
 		}
 
 		// filtration
-		// TODO
-		// fir(input, output4,coeffs,dline,N,TAPS);
-
+		moogFilter(&moogFilterDesc, VCObuffer, outputBuffer, N_SAMPLES, MIDICCparams[CC_CUTOFF], MIDICCparams[CC_RES]);
+		//for (i = 0; i < N_SAMPLES; i++)
+		//{
+		//	outputBuffer[i] = VCObuffer[i];
+		//}
+		
+		
 		// envelope
 		envelopeStep(&envelopeA, envelopeBuffer, N_SAMPLES);
 		for (i = 0; i < N_SAMPLES; i++)
 		{
-			outputBuffer[i] = VCObuffer[i] * envelopeBuffer[i];
+			outputBuffer[i] = outputBuffer[i] * envelopeBuffer[i];
 		}
 
 		//distortion
 		distortion(outputBuffer, N_SAMPLES, DIST_GAIN_MAX * MIDICCparams[CC_DISTORTION]);
-
-		//master volume
 
 		//pan
 		for (i = 0; i < N_SAMPLES; i++)
