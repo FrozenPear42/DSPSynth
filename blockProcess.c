@@ -23,7 +23,7 @@
 #define CC_CUTOFF 27
 #define CC_RES 28
 
-#define LFO_MAX_FREQ 40.0
+#define LFO_MAX_FREQ 20.0
 #define DIST_GAIN_MAX 100.0
 #define TIME_MAX 1.0
 
@@ -50,21 +50,21 @@ void initSynth(void)
     pitchA = 440.0;
     envelopeClear(&envelopeA);
 
- 	MIDICCparams[CC_MIX_SINE] = 1.0;
- 	MIDICCparams[CC_MIX_SQUARE] = 0.0;
- 	MIDICCparams[CC_MIX_SAWTOOTH] = 0.0;
- 	MIDICCparams[CC_MIX_TRIANGLE] = 0.0;
- 	MIDICCparams[CC_LFO_FREQ] = 0.8;
- 	MIDICCparams[CC_DISTORTION] = 0.5;
- 	MIDICCparams[CC_PAN] = 0.5;
- 	MIDICCparams[CC_MASTER] = 0.5;
-	
- 	MIDICCparams[CC_ATTACK] = 0.4;
- 	MIDICCparams[CC_DECAY] = 0.1;
+	MIDICCparams[CC_MIX_SINE] = 1.0;
+	MIDICCparams[CC_MIX_SQUARE] = 0.0;
+	MIDICCparams[CC_MIX_SAWTOOTH] = 0.0;
+	MIDICCparams[CC_MIX_TRIANGLE] = 0.0;
 
- 	MIDICCparams[CC_CUTOFF] = 0.5;
- 	MIDICCparams[CC_RES] = 0.2;
+	MIDICCparams[CC_LFO_FREQ] = 0.0;
+	MIDICCparams[CC_DISTORTION] = 0.4;
+	MIDICCparams[CC_PAN] = 0.5;
+	MIDICCparams[CC_MASTER] = 1.0;
 	
+	MIDICCparams[CC_ATTACK] = 0.4;
+	MIDICCparams[CC_DECAY] = 0.1;
+
+	MIDICCparams[CC_CUTOFF] = 0.9;
+	MIDICCparams[CC_RES] = 0.2;
 
 	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, 1.0, MIDICCparams[CC_ATTACK] * TIME_MAX, MIDICCparams[CC_DECAY] * TIME_MAX);
     }
@@ -104,47 +104,62 @@ void processBlock(unsigned int *block_ptr)
 
     *pPPCTL = PPTRAN | PPBHC | PPDUR20 | PPDEN | PPEN;
     
-    
-    
-    SineOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
-    for (i = 0; i < N_SAMPLES; i++)
-        VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SINE];
+// LFO
+		if(MIDICCparams[CC_LFO_FREQ] < 0.00001)
+			for(i = 0; i < N_SAMPLES; i++)
+				LFObuffer[i] = 1.0;
+		else
+			SineOscillator(LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
+		
+		
+		// mixing VCO
+		SineOscillator(VCObuffer, N_SAMPLES, n, pitchA);
+		for (i = 0; i < N_SAMPLES; i++)
+		{
+			VCObuffer[i] = VCObuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_SINE];
+		}
 
-    SquareOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
-    for (i = 0; i < N_SAMPLES; i++)
-        VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SQUARE];
+		SquareOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
+		for (i = 0; i < N_SAMPLES; i++)
+		{
+			VCObuffer[i] += VCOTMPbuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_SQUARE];
+		}
 
-    SawtoothOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
-    for (i = 0; i < N_SAMPLES; i++)
-        VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SAWTOOTH];
+		SawtoothOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
+		for (i = 0; i < N_SAMPLES; i++)
+		{
+			VCObuffer[i] += VCOTMPbuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_SAWTOOTH];
+		}
 
-    TriangleOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
-    for (i = 0; i < N_SAMPLES; i++)
-        VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_TRIANGLE];
+		TriangleOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
+		for (i = 0; i < N_SAMPLES; i++)
+		{
+			VCObuffer[i] += VCOTMPbuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_TRIANGLE];
+		}
+		
+		//normalize
+		for (i = 0; i < N_SAMPLES; i++)
+		{
+			float level = 0.1 + MIDICCparams[CC_MIX_SINE] + MIDICCparams[CC_MIX_SQUARE] + MIDICCparams[CC_MIX_SAWTOOTH] + MIDICCparams[CC_MIX_TRIANGLE];
+			VCObuffer[i] = VCObuffer[i] / level;
+		}
+		
 
-    // LFO
-    SineOscillator(LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
+		// filtration
+		moogFilter(&moogFilterDesc, VCObuffer, outputBuffer, N_SAMPLES, MIDICCparams[CC_CUTOFF], MIDICCparams[CC_RES]);
+		//for(i=0;i<N_SAMPLES;i++)
+		//	outputBuffer[i] = VCObuffer[i];
+		
+		// envelope
+		envelopeStep(&envelopeA, envelopeBuffer, N_SAMPLES);
+		for (i = 0; i < N_SAMPLES; i++)
+		{
+			outputBuffer[i] = outputBuffer[i] * envelopeBuffer[i];
+		}
 
-    // VCO modulation with LFO
-    for (i = 0; i < N_SAMPLES; i++)
-        VCObuffer[i] = VCObuffer[i] * LFObuffer[i];
-
-    // filtration
-    moogFilter(&moogFilterDesc, VCObuffer, outputBuffer, N_SAMPLES, MIDICCparams[CC_CUTOFF], MIDICCparams[CC_RES]);
-    //for (i = 0; i < N_SAMPLES; i++)
-    //	outputBuffer[i] = VCObuffer[i];
-
-    // envelope
-    envelopeStep(&envelopeA, envelopeBuffer, N_SAMPLES);
-    for (i = 0; i < N_SAMPLES; i++)
-    {
-        outputBuffer[i] = outputBuffer[i] * envelopeBuffer[i];
-    }
-
-    //distortion
-    distortion(outputBuffer, N_SAMPLES, DIST_GAIN_MAX * MIDICCparams[CC_DISTORTION]);
-
-    //pan
+		//distortion
+		distortion(outputBuffer, N_SAMPLES, DIST_GAIN_MAX * MIDICCparams[CC_DISTORTION]);
+    //pan and conversion (final AMP)
     for (i = 0; i < N_SAMPLES; i++)
     {
         outputBufferLeft[i] = MIDICCparams[CC_MASTER] * (1 - MIDICCparams[CC_PAN]) * outputBuffer[i];
@@ -154,32 +169,6 @@ void processBlock(unsigned int *block_ptr)
         block_ptr[2*i] = l;
     	block_ptr[2*i+1] = r;
     }
-
-    // for (i = 0; i < NUM_SAMPLES; i++)
-    // {
-    //     is = *ptr;
-    //     if (is & 0x800000)
-    //         is |= 0xFF000000;
-    //     *ptr++ = is;
-    // }
-    // ptr = block_ptr;
-    // for (i = 0; i < NUM_SAMPLES / 2; i++)
-    // {
-    //     *ptr++ = (int)(*ptr * (int)vr) >> 7;
-    //     *ptr++ = (int)(*ptr * (int)vl) >> 7;
-    // }
-
-    unsigned int* ptr = block_ptr;    
-    
-    //for (i = 0; i < N_SAMPLES; i++)
-    //{
-    //	ptr[0] = 1;
-    	// ptr[i] = 
-    	// *block_ptr++ = (int)(*block_ptr)>>7;
-    	// *block_ptr++ = (int)(*block_ptr)>>7;
-        //*ptr++ = (int)0;//(unsigned int)(outputBufferLeft[i] * 8388608.0);
-        //*ptr++ = (int)0;//(unsigned int)(outputBufferRight[i] * 8388608.0);
-    //}
 
     //next buffer
     n = n + N_SAMPLES;

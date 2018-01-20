@@ -14,16 +14,15 @@ void SineOscillator(float *buffer, int bufferSize, long sample, float frequency)
 void SquareOscillator(float *buffer, int bufferSize, long sample, float frequency)
 {
     SineOscillator(buffer, bufferSize, sample, frequency);
-    distortion(buffer, bufferSize, 10000);
+    distortion(buffer, bufferSize, 100000);
 }
 
 void SawtoothOscillator(float *buffer, int bufferSize, long sample, float frequency)
 {
     int i;
-    float f = frequency / SAMPLING_FREQ;
-    long N = 1/f;
+    long N = SAMPLING_FREQ / frequency;
     for (i = 0; i < bufferSize; i++)
-        buffer[i] = (i + sample)%N - 0.5;
+        buffer[i] = 0.5 - ((i + sample)%N)/(float)N;
 }
 
 void TriangleOscillator(float *buffer, int bufferSize, long sample, float frequency)
