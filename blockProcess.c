@@ -9,25 +9,23 @@
 #define N_SAMPLES 256
 #define SAMPLING_FREQ 48000.0
 
-#define CC_MIX_SINE 16
-#define CC_MIX_SQUARE 17
-#define CC_MIX_SAWTOOTH 18
-#define CC_MIX_TRIANGLE 19
-#define CC_LFO_FREQ 20
-#define CC_DISTORTION 21
-#define CC_MASTER 22
-#define CC_PAN 23
+#define CC_MIX_SINE 21
+#define CC_MIX_SQUARE 22
+#define CC_MIX_SAWTOOTH 23
+#define CC_MIX_TRIANGLE 24
+#define CC_LFO_FREQ 25
+#define CC_DISTORTION 26
+#define CC_MASTER 31
+#define CC_PAN 32
 
-#define CC_ATTACK 24
-#define CC_DECAY 25
-#define CC_CUTOFF 26
-#define CC_RES 27
+#define CC_ATTACK 29
+#define CC_DECAY 30
+#define CC_CUTOFF 27
+#define CC_RES 28
 
 #define LFO_MAX_FREQ 40.0
 #define DIST_GAIN_MAX 100.0
 #define TIME_MAX 1.0
-
-float MIDICCparams[256];
 
 float LFObuffer[N_SAMPLES];
 
@@ -45,13 +43,32 @@ float pitchA;
 moog_filter_t moogFilterDesc;
 envelope_t envelopeA;
 
-void initSynth()
+void initSynth(void)
 {
     moogFilterInit(&moogFilterDesc);
     n = 0;
-    pitchA = 440;
+    pitchA = 440.0;
     envelopeClear(&envelopeA);
-}
+
+ 	MIDICCparams[CC_MIX_SINE] = 1.0;
+ 	MIDICCparams[CC_MIX_SQUARE] = 0.0;
+ 	MIDICCparams[CC_MIX_SAWTOOTH] = 0.0;
+ 	MIDICCparams[CC_MIX_TRIANGLE] = 0.0;
+ 	MIDICCparams[CC_LFO_FREQ] = 0.8;
+ 	MIDICCparams[CC_DISTORTION] = 0.5;
+ 	MIDICCparams[CC_PAN] = 0.5;
+ 	MIDICCparams[CC_MASTER] = 0.5;
+	
+ 	MIDICCparams[CC_ATTACK] = 0.4;
+ 	MIDICCparams[CC_DECAY] = 0.1;
+
+ 	MIDICCparams[CC_CUTOFF] = 0.5;
+ 	MIDICCparams[CC_RES] = 0.2;
+	
+
+	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, 1.0, MIDICCparams[CC_ATTACK] * TIME_MAX, MIDICCparams[CC_DECAY] * TIME_MAX);
+    }
+
 
 void activateNote(float pitch, float velocity)
 {
@@ -74,6 +91,21 @@ void processBlock(unsigned int *block_ptr)
     //Set the Processing Active Semaphore before starting processing
     isProcessing = 1;
 
+    *pPPCTL = 0;
+	
+    int led = int_cntr;
+    
+    *pIIPP = (int)&led;
+    *pIMPP = 1;
+    *pICPP = 1;
+    *pEMPP = 1;
+    *pECPP = 1;
+    *pEIPP = 0x400000;
+
+    *pPPCTL = PPTRAN | PPBHC | PPDUR20 | PPDEN | PPEN;
+    
+    
+    
     SineOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
     for (i = 0; i < N_SAMPLES; i++)
         VCObuffer[i] += VCOTMPbuffer[i] * MIDICCparams[CC_MIX_SINE];
@@ -117,6 +149,10 @@ void processBlock(unsigned int *block_ptr)
     {
         outputBufferLeft[i] = MIDICCparams[CC_MASTER] * (1 - MIDICCparams[CC_PAN]) * outputBuffer[i];
         outputBufferRight[i] = MIDICCparams[CC_MASTER] * (MIDICCparams[CC_PAN]) * outputBuffer[i];
+    	int l = (int)((outputBufferLeft[i]) * 8388608.0);
+    	int r = (int)((outputBufferRight[i]) * 8388608.0);
+        block_ptr[2*i] = l;
+    	block_ptr[2*i+1] = r;
     }
 
     // for (i = 0; i < NUM_SAMPLES; i++)
@@ -133,15 +169,36 @@ void processBlock(unsigned int *block_ptr)
     //     *ptr++ = (int)(*ptr * (int)vl) >> 7;
     // }
 
-    for (i = 0; i < NUM_SAMPLES; i++)
-    {
-        block_ptr[2 * i]  = (int)(outputBufferLeft[i] * 8388608.0);
-        block_ptr[2 * i + 1] = (int)(outputBufferRight[i] * 8388608.0);
-    }
+    unsigned int* ptr = block_ptr;    
+    
+    //for (i = 0; i < N_SAMPLES; i++)
+    //{
+    //	ptr[0] = 1;
+    	// ptr[i] = 
+    	// *block_ptr++ = (int)(*block_ptr)>>7;
+    	// *block_ptr++ = (int)(*block_ptr)>>7;
+        //*ptr++ = (int)0;//(unsigned int)(outputBufferLeft[i] * 8388608.0);
+        //*ptr++ = (int)0;//(unsigned int)(outputBufferRight[i] * 8388608.0);
+    //}
 
     //next buffer
     n = n + N_SAMPLES;
 
+    
+    *pPPCTL = 0;
+	
+    led = 0x00;
+    
+    *pIIPP = (int)&led;
+    *pIMPP = 1;
+    *pICPP = 1;
+    *pEMPP = 1;
+    *pECPP = 1;
+    *pEIPP = 0x400000;
+
+    *pPPCTL = PPTRAN | PPBHC | PPDUR20 | PPDEN | PPEN;
+    
+    
     //Clear the Processing Active Semaphore after processing is complete
     isProcessing = 0;
 }

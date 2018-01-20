@@ -46,9 +46,9 @@ extern int blockReady;
 extern unsigned int *src_pointer[3];
 extern int int_cntr;
 
-extern void InitSPI();
+extern void InitSPI(void);
 
-extern void initSynth();
+void initSynth(void);
 extern void activateNote(float pitch, float velocity);
 extern void turnDownNote(float pitch);
 

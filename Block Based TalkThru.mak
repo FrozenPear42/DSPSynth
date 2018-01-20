@@ -18,7 +18,7 @@
 # other than the host that created it and VisualDSP++ may be installed
 # in a different directory.
 
-ADI_DSP=C:\Program Files (x86)\Analog Devices\VisualDSP 5.1.2
+ADI_DSP=C:\Program Files\Analog Devices\VisualDSP 5.1.2
 
 
 # $VDSP is a gmake-friendly version of ADI_DIR

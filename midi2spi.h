@@ -9,7 +9,7 @@
 
 #define VOICES 1
 
-extern unsigned char MIDICCParams[256];
+extern float MIDICCparams[256];
 
 unsigned char notes[VOICES];
 unsigned char notes_velocity[VOICES];

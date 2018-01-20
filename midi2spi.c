@@ -35,7 +35,7 @@ float pitch[128] = {
 
 
 
-unsigned char MIDICCParams[256];
+float MIDICCparams[256];
     
 void handle_LED(int);
 
@@ -47,7 +47,7 @@ void InitSPI()
     /* First clear a few registers     */
 
     for (i = 0; i < 256; i++)
-        MIDICCParams[i] = 0;
+        MIDICCparams[i] = 0;
 
     for (i = 0; i < VOICES; i++)
     {
@@ -123,8 +123,7 @@ void SpiISR(int sig_int)
         {
             byte_3rd = rdata;
             indeks_midi = CC_REC; //jesli odbierze potem jeszcze jeden bajt <128, to kolejna dana
-            handle_LED(byte_3rd - 64);
-            MIDICCParams[byte_2nd] = byte_3rd;
+            MIDICCparams[byte_2nd] = byte_3rd/127.0;
         }
         else if (indeks_midi == NOTEON_SECOND_REC)
         {

@@ -45,7 +45,22 @@ int isProcessing=0;
 //If the processing takes too long, the program will be stuck in this infinite loop.
 void ProcessingTooLong()
 {
+	    //lights as described at the top of the file
+    *pPPCTL = 0;
+	
+    int led = 127;
+    
+    *pIIPP = (int)&led;
+    *pIMPP = 1;
+    *pICPP = 1;
+    *pEMPP = 1;
+    *pECPP = 1;
+    *pEIPP = 0x400000;
+
+    *pPPCTL = PPTRAN | PPBHC | PPDUR20 | PPDEN | PPEN;
+    
     while(1);
+    
 }
 
 void TalkThroughISR(int sig_int)
