@@ -49,7 +49,7 @@ extern int int_cntr;
 extern void InitSPI(void);
 
 void initSynth(void);
-extern void activateNote(float pitch, float velocity);
-extern void turnDownNote(float pitch);
+extern void activateNote(unsigned char note, float velocity);
+extern void turnDownNote(unsigned char note);
 
 #endif
