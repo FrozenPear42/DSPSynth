@@ -31,8 +31,8 @@ void main(void)
     initSynth();
 
     interrupt (SIG_SP0,TalkThroughISR);
-    // interrupt (SIG_IRQ1, Irq1ISR) ;
-    // interrupt (SIG_IRQ2, Irq2ISR) ;
+     interrupt (SIG_IRQ1, Irq1ISR) ;
+     interrupt (SIG_IRQ2, Irq2ISR) ;
     interrupt (SIG_P1, SpiISR);
 	
     // Be in infinite loop and do nothing until done.
