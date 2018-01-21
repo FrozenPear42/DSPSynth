@@ -42,7 +42,7 @@ Block\ Based\ TalkThru_Debug : ./Debug/Block\ Based\ TalkThru.dxe
 	@echo ".\Block_FIR_test.c"
 	$(VDSP)/cc21k.exe -c .\Block_FIR_test.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\Block_FIR_test.doj -MM
 
-./Debug/blockProcess.doj :blockProcess.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h midi2spi.h envelope.h effect.h oscillator.h filter.h $(VDSP)/213xx/include/math.h $(VDSP)/213xx/include/math_21xxx.h 
+Debug/blockProcess.doj :blockProcess.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h midi2spi.h envelope.h effect.h oscillator.h filter.h $(VDSP)/213xx/include/math.h $(VDSP)/213xx/include/math_21xxx.h 
 	@echo ".\blockProcess.c"
 	$(VDSP)/cc21k.exe -c .\blockProcess.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\blockProcess.doj -MM
 
@@ -58,31 +58,31 @@ Block\ Based\ TalkThru_Debug : ./Debug/Block\ Based\ TalkThru.dxe
 	@echo ".\filter.c"
 	$(VDSP)/cc21k.exe -c .\filter.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\filter.doj -MM
 
-./Debug/init1835viaSPI.doj :init1835viaSPI.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h ad1835.h 
+Debug/init1835viaSPI.doj :init1835viaSPI.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h ad1835.h 
 	@echo ".\init1835viaSPI.c"
 	$(VDSP)/cc21k.exe -c .\init1835viaSPI.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\init1835viaSPI.doj -MM
 
-./Debug/initDAI.doj :initDAI.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h $(VDSP)/213xx/include/SRU.h $(VDSP)/213xx/include/sru21364.h $(VDSP)/213xx/include/sru21363.h 
+Debug/initDAI.doj :initDAI.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h $(VDSP)/213xx/include/SRU.h $(VDSP)/213xx/include/sru21364.h $(VDSP)/213xx/include/sru21363.h 
 	@echo ".\initDAI.c"
 	$(VDSP)/cc21k.exe -c .\initDAI.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\initDAI.doj -MM
 
-./Debug/initPLL.doj :initPLL.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
+Debug/initPLL.doj :initPLL.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
 	@echo ".\initPLL.c"
 	$(VDSP)/cc21k.exe -c .\initPLL.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\initPLL.doj -MM
 
-./Debug/initSPORT.doj :initSPORT.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
+Debug/initSPORT.doj :initSPORT.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
 	@echo ".\initSPORT.c"
 	$(VDSP)/cc21k.exe -c .\initSPORT.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\initSPORT.doj -MM
 
-./Debug/irqprocess.doj :irqprocess.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h ad1835.h 
+Debug/irqprocess.doj :irqprocess.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h ad1835.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/def21364.h 
 	@echo ".\irqprocess.c"
 	$(VDSP)/cc21k.exe -c .\irqprocess.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\irqprocess.doj -MM
 
-./Debug/main.doj :main.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
+Debug/main.doj :main.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
 	@echo ".\main.c"
 	$(VDSP)/cc21k.exe -c .\main.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\main.doj -MM
 
-./Debug/midi2spi.doj :midi2spi.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h midi2spi.h 
+Debug/midi2spi.doj :midi2spi.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h midi2spi.h 
 	@echo ".\midi2spi.c"
 	$(VDSP)/cc21k.exe -c .\midi2spi.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\midi2spi.doj -MM
 
@@ -90,7 +90,7 @@ Block\ Based\ TalkThru_Debug : ./Debug/Block\ Based\ TalkThru.dxe
 	@echo ".\oscillator.c"
 	$(VDSP)/cc21k.exe -c .\oscillator.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\oscillator.doj -MM
 
-./Debug/SPORTisr.doj :SPORTisr.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h $(VDSP)/213xx/include/stdio.h $(VDSP)/213xx/include/stdio_21xxx.h 
+Debug/SPORTisr.doj :SPORTisr.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h $(VDSP)/213xx/include/stdio.h $(VDSP)/213xx/include/stdio_21xxx.h 
 	@echo ".\SPORTisr.c"
 	$(VDSP)/cc21k.exe -c .\SPORTisr.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\SPORTisr.doj -MM
 
@@ -104,19 +104,19 @@ ifeq ($(MAKECMDGOALS),Block Based TalkThru_Debug_clean)
 
 Block\ Based\ TalkThru_Debug_clean:
 	-$(RM) ".\Debug\Block_FIR_test.doj"
-	-$(RM) ".\Debug\blockProcess.doj"
+	-$(RM) "Debug\blockProcess.doj"
 	-$(RM) ".\Debug\effect.doj"
 	-$(RM) ".\Debug\envelope.doj"
 	-$(RM) ".\Debug\filter.doj"
-	-$(RM) ".\Debug\init1835viaSPI.doj"
-	-$(RM) ".\Debug\initDAI.doj"
-	-$(RM) ".\Debug\initPLL.doj"
-	-$(RM) ".\Debug\initSPORT.doj"
-	-$(RM) ".\Debug\irqprocess.doj"
-	-$(RM) ".\Debug\main.doj"
-	-$(RM) ".\Debug\midi2spi.doj"
+	-$(RM) "Debug\init1835viaSPI.doj"
+	-$(RM) "Debug\initDAI.doj"
+	-$(RM) "Debug\initPLL.doj"
+	-$(RM) "Debug\initSPORT.doj"
+	-$(RM) "Debug\irqprocess.doj"
+	-$(RM) "Debug\main.doj"
+	-$(RM) "Debug\midi2spi.doj"
 	-$(RM) ".\Debug\oscillator.doj"
-	-$(RM) ".\Debug\SPORTisr.doj"
+	-$(RM) "Debug\SPORTisr.doj"
 	-$(RM) ".\Debug\Block Based TalkThru.dxe"
 	-$(RM) ".\Debug\*.ipa"
 	-$(RM) ".\Debug\*.opa"

@@ -43,6 +43,11 @@ float pitchA;
 moog_filter_t moogFilterDesc;
 envelope_t envelopeA;
 
+sine_oscillator_t sine;
+square_oscillator_t square;
+triangle_oscillator_t triangle;
+sawtooth_oscillator_t sawtooth;
+
 void initSynth(void)
 {
     moogFilterInit(&moogFilterDesc);
@@ -66,7 +71,10 @@ void initSynth(void)
 	MIDICCparams[CC_CUTOFF] = 0.9;
 	MIDICCparams[CC_RES] = 0.2;
 
-	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, 1.0, MIDICCparams[CC_ATTACK] * TIME_MAX, MIDICCparams[CC_DECAY] * TIME_MAX);
+	InitSine(&sine);
+	InitSquare(&square);
+	InitTriangle(&triangle);
+	InitSawtooth(&sawtooth);
     }
 
 
@@ -104,34 +112,34 @@ void processBlock(unsigned int *block_ptr)
 
     *pPPCTL = PPTRAN | PPBHC | PPDUR20 | PPDEN | PPEN;
     
-// LFO
+		// LFO
 		if(MIDICCparams[CC_LFO_FREQ] < 0.00001)
 			for(i = 0; i < N_SAMPLES; i++)
 				LFObuffer[i] = 1.0;
 		else
-			SineOscillator(LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
+			SineOscillator(&sine, LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
 		
 		
 		// mixing VCO
-		SineOscillator(VCObuffer, N_SAMPLES, n, pitchA);
+		SineOscillator(&sine, VCObuffer, N_SAMPLES, n, pitchA);
 		for (i = 0; i < N_SAMPLES; i++)
 		{
 			VCObuffer[i] = VCObuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_SINE];
 		}
 
-		SquareOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
+		SquareOscillator(&square, VCOTMPbuffer, N_SAMPLES, n, pitchA);
 		for (i = 0; i < N_SAMPLES; i++)
 		{
 			VCObuffer[i] += VCOTMPbuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_SQUARE];
 		}
 
-		SawtoothOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
+		SawtoothOscillator(&sawtooth, VCOTMPbuffer, N_SAMPLES, n, pitchA);
 		for (i = 0; i < N_SAMPLES; i++)
 		{
 			VCObuffer[i] += VCOTMPbuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_SAWTOOTH];
 		}
 
-		TriangleOscillator(VCOTMPbuffer, N_SAMPLES, n, pitchA);
+		TriangleOscillator(&triangle, VCOTMPbuffer, N_SAMPLES, n, pitchA);
 		for (i = 0; i < N_SAMPLES; i++)
 		{
 			VCObuffer[i] += VCOTMPbuffer[i] * LFObuffer[i] * MIDICCparams[CC_MIX_TRIANGLE];
