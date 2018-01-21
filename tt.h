@@ -52,4 +52,6 @@ void initSynth(void);
 extern void activateNote(unsigned char note, float velocity);
 extern void turnDownNote(unsigned char note);
 
+void handle_LED(int);
+
 #endif

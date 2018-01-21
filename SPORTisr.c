@@ -48,7 +48,7 @@ void ProcessingTooLong()
 	    //lights as described at the top of the file
     *pPPCTL = 0;
 	
-    int led = 127;
+    int led = 128;
     
     *pIIPP = (int)&led;
     *pIMPP = 1;

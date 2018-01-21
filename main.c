@@ -20,16 +20,18 @@ void main(void)
     // need to be routed
     InitDAI();
 
-    // This function will configure the codec on the kit
-    Init1835viaSPI();
-
+    
     // Finally setup the sport to receive / transmit the data
     InitSPORT();
-
-    InitSPI();
+	
+    // This function will configure the codec on the kit
+    Init1835viaSPI();
+	InitSPI();
     
     initSynth();
-
+	
+    handle_LED(0);
+    
     interrupt (SIG_SP0,TalkThroughISR);
     interrupt (SIG_IRQ1, Irq1ISR) ;
     interrupt (SIG_IRQ2, Irq2ISR) ;

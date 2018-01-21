@@ -1,10 +1,6 @@
 #include "tt.h"
 #include "midi2spi.h"
 
-unsigned char notes[VOICES];
-unsigned char notes_velocity[VOICES];
-unsigned char notes_last_index;
-
 unsigned char liczba;
 unsigned char byte_2nd;
 unsigned char byte_3rd;
@@ -25,13 +21,6 @@ void InitSPI()
     for (i = 0; i < 256; i++)
         MIDICCparams[i] = 0;
 
-    for (i = 0; i < VOICES; i++)
-    {
-        notes[i] = 0;
-        notes_velocity[i] = 0;
-    }
-    notes_last_index = 0;
-
     *pSPICTL = (TXFLSH | RXFLSH);
     //    *pSPIFLG = 0;
 
@@ -49,7 +38,7 @@ void InitSPI()
     */
 
     *pSPICTL = (SPIEN | MSBF | WL16 | CPHASE); //TIMOD1 | SENDZ | ISSEN | CLKPL);
-    handle_LED(0);
+	handle_LED(0);
 }
 
 void SpiISR(int sig_int)
@@ -117,6 +106,7 @@ void SpiISR(int sig_int)
             if (byte_3rd != 0)
             {
                 activateNote(byte_2nd, byte_3rd / 127.0);
+                handle_LED(byte_2nd);
             }
             else
             {

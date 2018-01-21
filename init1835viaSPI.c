@@ -69,7 +69,7 @@ void Configure1835Register (int val)
         if (*pSPISTAT & SPIF)
             break ;
     }
-    Delay (500) ;
+    Delay (100) ;
 }
 
 //Receive a register setting from the AD1835

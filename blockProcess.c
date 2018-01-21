@@ -94,6 +94,7 @@ void initSynth(void)
 
 	envelopeClear(&envelopeA);
 	noteA = 0;
+	activateNote(70, 1.0);
 	}
 
 
@@ -123,21 +124,8 @@ void processBlock(unsigned int *block_ptr)
 
     //Set the Processing Active Semaphore before starting processing
     isProcessing = 1;
-
-    *pPPCTL = 0;
-	
-    int led = int_cntr;
     
-    *pIIPP = (int)&led;
-    *pIMPP = 1;
-    *pICPP = 1;
-    *pEMPP = 1;
-    *pECPP = 1;
-    *pEIPP = 0x400000;
-
-    *pPPCTL = PPTRAN | PPBHC | PPDUR20 | PPDEN | PPEN;
-    
-// LFO
+		// LFO
 		if(MIDICCparams[CC_LFO_FREQ] < 0.00001)
 			for(i = 0; i < N_SAMPLES; i++)
 				LFObuffer[i] = 1.0;
@@ -205,21 +193,6 @@ void processBlock(unsigned int *block_ptr)
 
     //next buffer
     n = n + N_SAMPLES;
-
-    
-    *pPPCTL = 0;
-	
-    led = 0x00;
-    
-    *pIIPP = (int)&led;
-    *pIMPP = 1;
-    *pICPP = 1;
-    *pEMPP = 1;
-    *pECPP = 1;
-    *pEIPP = 0x400000;
-
-    *pPPCTL = PPTRAN | PPBHC | PPDUR20 | PPDEN | PPEN;
-    
     
     //Clear the Processing Active Semaphore after processing is complete
     isProcessing = 0;
