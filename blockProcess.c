@@ -94,7 +94,7 @@ void initSynth(void)
 
 	envelopeClear(&envelopeA);
 	noteA = 0;
-	activateNote(70, 1.0);
+	//activateNote(70, 1.0);
 	}
 
 

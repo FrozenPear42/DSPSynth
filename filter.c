@@ -16,7 +16,7 @@ void moogFilter(moog_filter_t *filter, float *input, float *output, long bufferS
 {
     int i;
     float tmp;
-    float f = fc * 1.16;
+    float f = (fc + 0.04) * 1.16;
     float f2 = f * f;
     float fb = 4 * res * (1.0 - 0.15 * f2);
     for (i = 0; i < bufferSize; i++)

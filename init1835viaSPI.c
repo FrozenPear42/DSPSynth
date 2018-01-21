@@ -41,7 +41,7 @@ void SetupSPI1835 ()
     *pSPIFLG = 0;
 
     /* Setup the baud rate to 1MHz */
-    *pSPIBAUD = 100;
+    *pSPIBAUD = 1;
 
     /* Setup the SPI Flag register to FLAG3 : 0xF708*/
     *pSPIFLG = 0xF708;

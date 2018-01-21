@@ -11,7 +11,7 @@ float MIDICCparams[256];
     
 void handle_LED(int);
 
-void InitSPI()
+void InitSPI(void)
 {
     int i;
     index = 0;
