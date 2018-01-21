@@ -45,10 +45,12 @@ unsigned char noteA;
 moog_filter_t moogFilterDesc;
 envelope_t envelopeA;
 
+sine_oscillator_t LFO;
 sine_oscillator_t sine;
 square_oscillator_t square;
 triangle_oscillator_t triangle;
 sawtooth_oscillator_t sawtooth;
+
 
 float pitchTable[128] = {
 	8.175798915643707, 8.661957218027252, 9.177023997418987, 9.722718241315029, 10.300861153527185, 10.913382232281371,
@@ -95,6 +97,7 @@ void initSynth(void)
 	MIDICCparams[CC_CUTOFF] = 0.9;
 	MIDICCparams[CC_RES] = 0.2;
 
+	InitSine(&LFO);
 	InitSine(&sine);
 	InitSquare(&square);
 	InitTriangle(&triangle);
@@ -136,7 +139,7 @@ void processBlock(unsigned int *block_ptr)
 		for (i = 0; i < N_SAMPLES; i++)
 			LFObuffer[i] = 1.0;
 	else
-		SineOscillator(&sine, LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
+		SineOscillator(&LFO, LFObuffer, N_SAMPLES, n, LFO_MAX_FREQ * MIDICCparams[CC_LFO_FREQ]);
 
 	// mixing VCO
 	SineOscillator(&sine, VCObuffer, N_SAMPLES, n, pitchA);
