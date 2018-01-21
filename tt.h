@@ -34,6 +34,7 @@ extern unsigned int Get1835Register(int i);
 extern void SetupIRQ12();
 extern void Irq1ISR(int i);
 extern void Irq2ISR(int i);
+void SpiISR(int sig_int);
 
 extern void Delay(int i);
 
@@ -46,10 +47,12 @@ extern int blockReady;
 extern unsigned int *src_pointer[3];
 extern int int_cntr;
 
-extern void InitSPI(void);
+void InitSPI(void);
 
 void initSynth(void);
-extern void activateNote(float pitch, float velocity);
-extern void turnDownNote(float pitch);
+void activateNote(unsigned char note, float velocity);
+void turnDownNote(unsigned char note);
+
+void handle_LED(int);
 
 #endif

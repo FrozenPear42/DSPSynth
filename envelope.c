@@ -10,7 +10,9 @@ void envelopeClear(envelope_t *envelope) {
 
 void envelopeInit(envelope_t *envelope, long samplingFrequency, float lowLevel, float highLevel, float riseTime, float decayTime)
 {
-    envelope->currentValue = lowLevel;
+	if(envelope->currentValue < 0.1)
+    	envelope->currentValue = lowLevel;
+    
     envelope->attackCoeff = (log(highLevel) - log(lowLevel)) / (riseTime * samplingFrequency);
     envelope->decayCoeff = (log(lowLevel) - log(highLevel)) / (decayTime * samplingFrequency);
     envelope->state = ENVELOPE_RISE;
@@ -31,6 +33,8 @@ void envelopeStep(envelope_t *envelope, float *buffer, long bufferSize)
         envelope->currentValue += coeff * envelope->currentValue;
         if(envelope->currentValue > envelope->highLevel)
             envelope->currentValue = envelope->highLevel;
+        if(envelope->currentValue < 0)
+        	envelope->currentValue = 0;
         buffer[i] = envelope->currentValue;
     }
 }

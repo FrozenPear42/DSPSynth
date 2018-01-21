@@ -13,29 +13,38 @@ void SetupIRQ12(void);
 
 void main(void)
 {
-    
+    // Init clock
 	InitPLL ();
-	SetupIRQ12 () ;
+	// SetupIRQ12 () ;
+	// Wait til clock stabilises
+	Delay(5000000);   
+    
     // Need to initialize DAI because the sport signals
     // need to be routed
-    InitDAI();
-
-    // This function will configure the codec on the kit
+    InitDAI(); 
+    
+    // Init Codec
+    // Wait til DAI stabilises
+    Delay(5000000);   
     Init1835viaSPI();
-
+    
     // Finally setup the sport to receive / transmit the data
     InitSPORT();
-
+    
+    // This function will configure the codec on the kit
+    // Wait til codec initialises
+    Delay(5000000);   
     InitSPI();
     
     initSynth();
-
+    handle_LED(0);
+    
     interrupt (SIG_SP0,TalkThroughISR);
-     interrupt (SIG_IRQ1, Irq1ISR) ;
-     interrupt (SIG_IRQ2, Irq2ISR) ;
     interrupt (SIG_P1, SpiISR);
+
+    //    interrupt (SIG_IRQ1, Irq1ISR) ;
+	//    interrupt (SIG_IRQ2, Irq2ISR) ;
 	
-    // Be in infinite loop and do nothing until done.
     for(;;)
     {
     	while(!blockReady);
