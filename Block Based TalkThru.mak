@@ -54,7 +54,7 @@ Debug/envelope.doj :envelope.c envelope.h $(VDSP)/213xx/include/math.h $(VDSP)/2
 	@echo ".\envelope.c"
 	$(VDSP)/cc21k.exe -c .\envelope.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\envelope.doj -MM
 
-./Debug/filter.doj :filter.c filter.h 
+Debug/filter.doj :filter.c filter.h 
 	@echo ".\filter.c"
 	$(VDSP)/cc21k.exe -c .\filter.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\filter.doj -MM
 
@@ -78,7 +78,7 @@ Debug/irqprocess.doj :irqprocess.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP
 	@echo ".\irqprocess.c"
 	$(VDSP)/cc21k.exe -c .\irqprocess.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\irqprocess.doj -MM
 
-./Debug/main.doj :main.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
+Debug/main.doj :main.c tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h 
 	@echo ".\main.c"
 	$(VDSP)/cc21k.exe -c .\main.c -file-attr ProjectName=Block\ Based\ TalkThru -g -no-multiline -double-size-32 -warn-protos -si-revision 0.5 -proc ADSP-21364 -o .\Debug\main.doj -MM
 
@@ -107,13 +107,13 @@ Block\ Based\ TalkThru_Debug_clean:
 	-$(RM) "Debug\blockProcess.doj"
 	-$(RM) "Debug\effect.doj"
 	-$(RM) "Debug\envelope.doj"
-	-$(RM) ".\Debug\filter.doj"
+	-$(RM) "Debug\filter.doj"
 	-$(RM) "Debug\init1835viaSPI.doj"
 	-$(RM) "Debug\initDAI.doj"
 	-$(RM) "Debug\initPLL.doj"
 	-$(RM) "Debug\initSPORT.doj"
 	-$(RM) "Debug\irqprocess.doj"
-	-$(RM) ".\Debug\main.doj"
+	-$(RM) "Debug\main.doj"
 	-$(RM) "Debug\midi2spi.doj"
 	-$(RM) "Debug\oscillator.doj"
 	-$(RM) "Debug\SPORTisr.doj"

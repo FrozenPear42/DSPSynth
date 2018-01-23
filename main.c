@@ -17,7 +17,7 @@ void main(void)
 	InitPLL ();
 	// SetupIRQ12 () ;
 	// Wait til clock stabilises
-	Delay(5000000);   
+	Delay(20000000);   
     
     // Need to initialize DAI because the sport signals
     // need to be routed
@@ -25,7 +25,7 @@ void main(void)
     
     // Init Codec
     // Wait til DAI stabilises
-    Delay(5000000);   
+    Delay(20000000);   
     Init1835viaSPI();
     
     // Finally setup the sport to receive / transmit the data
@@ -33,7 +33,7 @@ void main(void)
     
     // This function will configure the codec on the kit
     // Wait til codec initialises
-    Delay(5000000);   
+    Delay(20000000);   
     InitSPI();
     
     initSynth();

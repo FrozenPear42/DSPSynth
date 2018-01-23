@@ -14,17 +14,19 @@
 #define CC_MIX_SAWTOOTH 23
 #define CC_MIX_TRIANGLE 24
 #define CC_LFO_FREQ 25
-#define CC_DISTORTION 26
-#define CC_MASTER 31
-#define CC_PAN 32
 
-#define CC_ATTACK 29
-#define CC_DECAY 30
-#define CC_CUTOFF 27
-#define CC_RES 28
+#define CC_CUTOFF 26
+#define CC_RES 27
+
+#define CC_ATTACK 70
+#define CC_DECAY 71
+
+#define CC_DISTORTION 72
+#define CC_PAN 73
+#define CC_MASTER 28
 
 #define LFO_MAX_FREQ 20.0
-#define DIST_GAIN_MAX 500.0
+#define DIST_GAIN_MAX 100.0
 #define TIME_MAX 1.0
 
 float LFObuffer[N_SAMPLES];
@@ -112,7 +114,7 @@ void activateNote(unsigned char note, float velocity)
 	//	return;
 	noteA = note;
 	pitchA = pitchTable[note];
-	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, velocity, MIDICCparams[CC_ATTACK] * TIME_MAX, MIDICCparams[CC_DECAY] * TIME_MAX);
+	envelopeInit(&envelopeA, SAMPLING_FREQ, 0.01, velocity, MIDICCparams[CC_ATTACK] * TIME_MAX + 0.001, MIDICCparams[CC_DECAY] * TIME_MAX + 0.001);
 }
 
 void turnDownNote(unsigned char note)
@@ -133,7 +135,7 @@ void processBlock(unsigned int *block_ptr)
 
 	//Set the Processing Active Semaphore before starting processing
 	isProcessing = 1;
-
+	
 	// LFO
 	if (MIDICCparams[CC_LFO_FREQ] < 0.00001)
 		for (i = 0; i < N_SAMPLES; i++)
@@ -169,12 +171,12 @@ void processBlock(unsigned int *block_ptr)
 	//normalize
 	for (i = 0; i < N_SAMPLES; i++)
 	{
-		float level = 0.1 + MIDICCparams[CC_MIX_SINE] + MIDICCparams[CC_MIX_SQUARE] + MIDICCparams[CC_MIX_SAWTOOTH] + MIDICCparams[CC_MIX_TRIANGLE];
+		float level = 0.01 + MIDICCparams[CC_MIX_SINE] + MIDICCparams[CC_MIX_SQUARE] + MIDICCparams[CC_MIX_SAWTOOTH] + MIDICCparams[CC_MIX_TRIANGLE];
 		VCObuffer[i] = VCObuffer[i] / level;
 	}
 
 	// filtration
-	moogFilter(&moogFilterDesc, VCObuffer, outputBuffer, N_SAMPLES, MIDICCparams[CC_CUTOFF], MIDICCparams[CC_RES]);
+	moogFilter(&moogFilterDesc, VCObuffer, outputBuffer, N_SAMPLES, MIDICCparams[CC_CUTOFF]*MIDICCparams[CC_CUTOFF], MIDICCparams[CC_RES]);
 	//for(i=0;i<N_SAMPLES;i++)
 	//	outputBuffer[i] = VCObuffer[i];
 
@@ -186,7 +188,7 @@ void processBlock(unsigned int *block_ptr)
 	}
 
 	//distortion
-	distortion(outputBuffer, N_SAMPLES, DIST_GAIN_MAX * MIDICCparams[CC_DISTORTION]);
+	distortion(outputBuffer, N_SAMPLES, DIST_GAIN_MAX * MIDICCparams[CC_DISTORTION] + 0.1);
 	//pan and conversion (final AMP)
 	for (i = 0; i < N_SAMPLES; i++)
 	{
